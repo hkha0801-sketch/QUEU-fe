@@ -1,18 +1,8 @@
 import React from "react";
-import Modal from "./components/Modal";
-import Sidebar from "./components/Sidebar";
-import Home from "./pages/Home";
+import AppRouter from "./core/router";
 
-export interface IApp {}
-
-const App: React.FC<IApp> = (): React.ReactElement => {
-  return (
-    <>
-      <Home />
-      <Modal />
-      <Sidebar />
-    </>
-  );
+const App: React.FC = () => {
+  return <AppRouter />;
 };
 
 export default App;
