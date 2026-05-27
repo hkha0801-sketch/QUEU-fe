@@ -2,7 +2,7 @@ import { HomeDashboard } from "../types/home.types";
 
 export const homeMockData: HomeDashboard = {
   user: {
-    name: "Kha Bùi",
+    name: "Bé Bự",
     avatar: "/shidoon-blue-icon.jpg",
     greeting: "Cùng luyện tập để tiến bộ mỗi ngày nào!",
   },
