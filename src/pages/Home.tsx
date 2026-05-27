@@ -1,5 +1,4 @@
 import React from "react";
-import { FaBars } from "react-icons/fa";
 import { useGlobalContext } from "../components/context";
 
 export interface IHome {}
@@ -10,9 +9,6 @@ const Home: React.FC<IHome> = (): React.ReactElement => {
   return (
     <>
       <main>
-        <button type="button" className="sidebar-toggle" onClick={openSidebar}>
-          <FaBars />
-        </button>
         <button type="button" className="btn" onClick={openModal}>
           show modal
         </button>
