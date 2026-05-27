@@ -3,8 +3,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "../shared/layouts/MainLayout";
 import HomePage from "../features/home/pages/HomePage";
 import ChatPage from "../features/chat/pages/ChatPage";
+import UpgradePlanPage from "../features/chat/pages/UpgradePlanPage";
 import RoadmapPage from "../features/ai-roadmap/pages/RoadmapPage";
 import SoloPage from "../features/solo/pages/SoloPage";
+import MatchmakingPage from "../features/solo/pages/MatchmakingPage";
+import SoloEditorPage from "../features/solo/pages/SoloEditorPage";
+import SoloResultPage from "../features/solo/pages/SoloResultPage";
 import EditorPage from "../features/editor/pages/EditorPage";
 import InterviewPage from "../features/interview/pages/InterviewPage";
 import ProblemPage from "../features/problem/pages/ProblemPage";
@@ -21,8 +25,12 @@ const AppRouter: React.FC = () => {
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/chat" element={<ChatPage />} />
+          <Route path="/chat/upgrade" element={<UpgradePlanPage />} />
           <Route path="/roadmap" element={<RoadmapPage />} />
           <Route path="/solo" element={<SoloPage />} />
+          <Route path="/solo/matchmaking" element={<MatchmakingPage />} />
+          <Route path="/solo/editor/:sessionId" element={<SoloEditorPage />} />
+          <Route path="/solo/result/:sessionId" element={<SoloResultPage />} />
           <Route path="/editor" element={<EditorPage />} />
           <Route path="/interview" element={<InterviewPage />} />
           <Route path="/problems" element={<ProblemPage />} />
