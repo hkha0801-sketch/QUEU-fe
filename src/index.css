@@ -2250,6 +2250,8 @@ Upgrade Plan Page
 .result-actions {
   display: flex;
   gap: 1rem;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 /*
