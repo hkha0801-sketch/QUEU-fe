@@ -9,7 +9,7 @@ export const links: {
 }[] = [
   {
     id: 1,
-    url: "/",
+    url: "/home",
     text: "home",
     icon: <img src="/HomeButton.png" alt="Home" style={{ width: "30px", height: "30px", verticalAlign: "center", display: "inline-block", opacity: 0.5 }} />,
   },
