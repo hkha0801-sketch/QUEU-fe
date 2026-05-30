@@ -6,7 +6,8 @@ const LoginForm = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    // TODO: thay bằng call API thật sau
+    // TODO: thay bằng call API thật sau, lưu token thực vào đây
+    localStorage.setItem("isLoggedIn", "true");
     navigate("/home");
   };
 

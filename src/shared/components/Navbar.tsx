@@ -156,7 +156,14 @@ const Navbar: React.FC = () => {
 
               <hr className="dropdown-divider" />
 
-              <button className="dropdown-item dropdown-item-danger">
+              <button
+                className="dropdown-item dropdown-item-danger"
+                onClick={() => {
+                  localStorage.removeItem("isLoggedIn");
+                  setProfileOpen(false);
+                  navigate("/login");
+                }}
+              >
                 <FaSignOutAlt /> Sign Out
               </button>
             </div>
