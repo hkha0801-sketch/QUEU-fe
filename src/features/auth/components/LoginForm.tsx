@@ -1,7 +1,15 @@
+import { useNavigate } from "react-router-dom";
 import SocialLogin from "./SocialLogin";
 import AuthDivider from "./AuthDivider";
 
 const LoginForm = () => {
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    // TODO: thay bằng call API thật sau
+    navigate("/home");
+  };
+
   return (
     <div className="auth-right">
       <h2 className="auth-title">Log In Account</h2>
@@ -39,7 +47,7 @@ const LoginForm = () => {
           </small>
         </div>
 
-        <button className="auth-submit">
+        <button className="auth-submit" onClick={handleLogin}>
           Log In
         </button>
 

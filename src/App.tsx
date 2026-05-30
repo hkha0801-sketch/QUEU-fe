@@ -24,7 +24,7 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
 
         {/* Auth - không Sidebar/Navbar */}
         <Route path="/login" element={<Login />} />
