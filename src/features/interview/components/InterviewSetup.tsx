@@ -4,6 +4,7 @@ import { InterviewConfig, InterviewDifficulty, InterviewTopic } from "../types/i
 interface Props {
   onStart: (config: InterviewConfig) => void;
   isLoading: boolean;
+  onBack?: () => void;
 }
 
 const TOPICS: { value: InterviewTopic; label: string; icon: string; desc: string }[] = [
@@ -22,7 +23,7 @@ const DIFFICULTIES: { value: InterviewDifficulty; label: string; color: string; 
   { value: "hard", label: "Hard", color: "#dc2626", desc: "Senior / Staff" },
 ];
 
-const InterviewSetup: React.FC<Props> = ({ onStart, isLoading }) => {
+const InterviewSetup: React.FC<Props> = ({ onStart, isLoading, onBack }) => {
   const [topic, setTopic] = useState<InterviewTopic>("algorithms");
   const [difficulty, setDifficulty] = useState<InterviewDifficulty>("medium");
   const [numQuestions, setNumQuestions] = useState(3);
@@ -34,6 +35,11 @@ const InterviewSetup: React.FC<Props> = ({ onStart, isLoading }) => {
   return (
     <div className="interview-setup">
       <div className="interview-setup-header">
+         {onBack && (
+            <button className="interview-back-btn" onClick={onBack}>
+              ← Quay lại
+         </button>
+        )}
         <div className="interview-arya-badge">
           <span>🤖</span>
           <span>Arya AI Interviewer</span>

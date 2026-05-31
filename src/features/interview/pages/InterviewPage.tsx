@@ -3,21 +3,37 @@ import { useInterview } from "../hooks/useInterview";
 import InterviewSetup from "../components/InterviewSetup";
 import InterviewSessionView from "../components/InterviewSessionView";
 import InterviewReportView from "../components/InterviewReportView";
+import InterviewLanding from "../components/InterviewLanding";
 
 const InterviewPage: React.FC = () => {
-  const { phase, session, report, isLoading, error, beginInterview, submitAnswer, resetInterview } =
-    useInterview();
+  const {
+    phase,
+    session,
+    report,
+    isLoading,
+    error,
+    goToSetup,
+    beginInterview,
+    submitAnswer,
+    resetInterview,
+  } = useInterview();
+
+  if (phase === "landing") {
+    return <InterviewLanding onStartNow={goToSetup} />;
+  }
 
   if (phase === "setup") {
-    return <InterviewSetup onStart={beginInterview} isLoading={isLoading} />;
+    return <InterviewSetup onStart={beginInterview} isLoading={isLoading} onBack={resetInterview} />;
   }
 
   if (phase === "generating-report") {
     return (
       <div className="interview-loading-screen">
         <div className="interview-spinner" />
-        <div className="interview-loading-title">Dang phan tich buoi phong van...</div>
-        <div className="interview-loading-sub">Arya dang doc lai toan bo cau tra loi va tao bao cao chi tiet.</div>
+        <div className="interview-loading-title">Đang phân tích buổi phỏng vấn...</div>
+        <div className="interview-loading-sub">
+          Arya đang đọc lại toàn bộ câu trả lời và tạo báo cáo chi tiết.
+        </div>
       </div>
     );
   }

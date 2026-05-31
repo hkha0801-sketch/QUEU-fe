@@ -6,15 +6,19 @@ function genId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
-export type InterviewPhase = "setup" | "session" | "generating-report" | "report";
+export type InterviewPhase = "landing" | "setup" | "session" | "generating-report" | "report";
 
 export function useInterview() {
-  const [phase, setPhase] = useState<InterviewPhase>("setup");
+  const [phase, setPhase] = useState<InterviewPhase>("landing");
   const [session, setSession] = useState<InterviewSession | null>(null);
   const [report, setReport] = useState<InterviewReport | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const startTimeRef = useRef<number>(0);
+
+  const goToSetup = useCallback(() => {
+    setPhase("setup");
+  }, []);
 
   const beginInterview = useCallback(async (config: InterviewConfig) => {
     setIsLoading(true);
@@ -33,7 +37,7 @@ export function useInterview() {
       setSession(sess);
       setPhase("session");
     } catch {
-      setError("Khong the bat dau phong van. Vui long thu lai.");
+      setError("Không thể bắt đầu phỏng vấn. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }
@@ -68,19 +72,19 @@ export function useInterview() {
         setPhase("report");
       }
     } catch {
-      setError("Loi ket noi. Vui long thu lai.");
+      setError("Lỗi kết nối. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }
   }, [session, isLoading]);
 
   const resetInterview = useCallback(() => {
-    setPhase("setup");
+    setPhase("landing");
     setSession(null);
     setReport(null);
     setError(null);
     setIsLoading(false);
   }, []);
 
-  return { phase, session, report, isLoading, error, beginInterview, submitAnswer, resetInterview };
+  return { phase, session, report, isLoading, error, goToSetup, beginInterview, submitAnswer, resetInterview };
 }

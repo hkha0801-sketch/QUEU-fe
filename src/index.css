@@ -3095,3 +3095,164 @@ Auth Layout (Login / Register)
 }
 
 .auth-switch a:hover { text-decoration: underline; }
+
+/* =============================================
+   AI INTERVIEW LANDING PAGE — thêm vào cuối index.css
+   ============================================= */
+
+.ai-interview-page {
+  padding: 2rem 2.5rem;
+  max-width: 1100px;
+  background: #f8fafc;
+  min-height: 100%;
+}
+
+.ai-interview-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.ai-interview-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.01em;
+  text-transform: none;
+}
+
+.ai-interview-subtitle {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.ai-interview-chat-btn {
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ai-interview-chat-btn:hover { background: #1f2937; transform: translateY(-1px); }
+
+.ai-interview-section { margin-bottom: 2.5rem; }
+
+.ai-interview-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.ai-interview-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.ai-interview-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+.ai-interview-card--schedule { opacity: 0.8; }
+
+.ai-interview-card-icon { margin-bottom: 0.25rem; }
+
+.ai-interview-card-name { font-weight: 700; font-size: 1rem; color: #111827; }
+.ai-interview-card-name--muted { color: #6b7280; }
+
+.ai-interview-card-desc { font-size: 0.8rem; color: #6b7280; margin-bottom: 0.5rem; }
+.ai-interview-card-desc--muted { color: #9ca3af; }
+
+.ai-interview-start-btn {
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s, transform 0.15s;
+  line-height: 1.4;
+}
+.ai-interview-start-btn:hover { background: #1f2937; transform: translateY(-1px); }
+
+.ai-interview-schedule-btn {
+  background: #fff;
+  color: #374151;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: border-color 0.2s, background 0.2s;
+}
+.ai-interview-schedule-btn:hover { border-color: #9ca3af; background: #f9fafb; }
+
+.ai-interview-table-wrapper {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ai-interview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.ai-interview-table thead tr { border-bottom: 1px solid #e5e7eb; }
+
+.ai-interview-table th {
+  padding: 0.875rem 1.5rem;
+  text-align: left;
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 0.8rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.ai-interview-table td {
+  padding: 0.875rem 1.5rem;
+  color: #374151;
+  border-bottom: 1px solid #f3f4f6;
+}
+.ai-interview-table tbody tr:last-child td { border-bottom: none; }
+.ai-interview-table tbody tr:hover { background: #f9fafb; cursor: pointer; }
+
+.interview-back-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0.25rem 0;
+  margin-bottom: 1rem;
+  display: block;
+  transition: color 0.2s;
+}
+.interview-back-btn:hover { color: #111827; }
