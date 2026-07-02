@@ -32,7 +32,7 @@ const InterviewLanding: React.FC<Props> = ({ onStartNow, onSchedule, onChatWithA
       {/* Header */}
       <div className="ai-interview-header">
         <div className="ai-interview-header-left">
-          <h1 className="ai-interview-title">Interview with Arya!</h1>
+          <h1 className="ai-interview-title">Interview with Arya</h1>
           <p className="ai-interview-subtitle">
             Ready to meet our best and hardest examiner for your Interview
           </p>

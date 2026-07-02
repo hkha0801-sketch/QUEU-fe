@@ -3097,7 +3097,7 @@ Auth Layout (Login / Register)
 .auth-switch a:hover { text-decoration: underline; }
 
 /* =============================================
-   AI INTERVIEW LANDING PAGE — thêm vào cuối index.css
+   AI INTERVIEW LANDING PAGE 
    ============================================= */
 
 .ai-interview-page {
@@ -3105,6 +3105,8 @@ Auth Layout (Login / Register)
   max-width: 1100px;
   background: #f8fafc;
   min-height: 100%;
+  font-family: Kunika, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .ai-interview-header {
