@@ -5,13 +5,20 @@ interface PastInterview {
   name: string;
   date: string;
   score: string;
+  result: "strong-hire" | "hire" | "no-hire";
 }
 
-// TODO: thay bằng API call thực tế
 const MOCK_PAST_INTERVIEWS: PastInterview[] = [
-  { id: 3, name: "3 - Nvidia", date: "Mar 10, 2024", score: "65/ 100" },
-  { id: 1, name: "1 - Google", date: "Mar 2, 2024", score: "50/ 100" },
+  { id: 3, name: "Nvidia", date: "Mar 10, 2024", score: "65/ 100", result: "hire" },
+  { id: 2, name: "Meta", date: "Nov 3, 2024", score: "70/ 100", result: "hire" },
+  { id: 1, name: "Google", date: "Mar 2, 2024", score: "50/ 100", result: "no-hire" },
 ];
+
+const RESULT_BADGE: Record<string, { label: string; color: string; bg: string }> = {
+  "strong-hire": { label: "Strong Hire", color: "#16a34a", bg: "#f0fdf4" },
+  "hire": { label: "Hire", color: "#2563eb", bg: "#eff6ff" },
+  "no-hire": { label: "No Hire", color: "#dc2626", bg: "#fef2f2" },
+};
 
 interface Props {
   onStartNow: () => void;
@@ -43,12 +50,12 @@ const InterviewLanding: React.FC<Props> = ({ onStartNow, onSchedule, onChatWithA
           <div className="ai-interview-card">
             <div className="ai-interview-card-icon">
               <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-                <circle cx="22" cy="22" r="20" stroke="#1a1a2e" strokeWidth="2" />
-                <text x="22" y="27" textAnchor="middle" fontSize="10" fontWeight="700" fill="#1a1a2e" fontFamily="sans-serif">NOW</text>
+                <circle cx="22" cy="22" r="20" stroke="#6366f1" strokeWidth="2" />
+                <polygon points="18,15 32,22 18,29" fill="#6366f1" />
               </svg>
             </div>
             <div className="ai-interview-card-name">Bắt đầu nhanh</div>
-            <div className="ai-interview-card-desc">Kéo dài 1-2 tiếng</div>
+            <div className="ai-interview-card-desc">Kéo dài 1–2 tiếng</div>
             <button className="ai-interview-start-btn" onClick={onStartNow}>
               Bắt đầu 1 cuộc phỏng vấn với Arya ngay bây giờ
             </button>
@@ -69,7 +76,7 @@ const InterviewLanding: React.FC<Props> = ({ onStartNow, onSchedule, onChatWithA
               Lịch tiếp theo của bạn: 2 ngày nữa
             </div>
             <button className="ai-interview-schedule-btn" onClick={onSchedule}>
-              Lên lịch cho buổi phỏng vấn tiếp theo
+              Lên lịch buổi phỏng vấn tiếp theo
             </button>
           </div>
         </div>
@@ -85,16 +92,35 @@ const InterviewLanding: React.FC<Props> = ({ onStartNow, onSchedule, onChatWithA
                 <th>Interview</th>
                 <th>Date</th>
                 <th>Score</th>
+                <th>Result</th>
               </tr>
             </thead>
             <tbody>
-              {MOCK_PAST_INTERVIEWS.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.name}</td>
-                  <td>{item.date}</td>
-                  <td>{item.score}</td>
-                </tr>
-              ))}
+              {MOCK_PAST_INTERVIEWS.map((item) => {
+                const badge = RESULT_BADGE[item.result];
+                return (
+                  <tr key={item.id}>
+                    <td style={{ fontWeight: 600 }}>{item.id} – {item.name}</td>
+                    <td>{item.date}</td>
+                    <td style={{ fontWeight: 700 }}>{item.score}</td>
+                    <td>
+                      <span
+                        style={{
+                          display: "inline-block",
+                          padding: "0.15rem 0.65rem",
+                          borderRadius: "99px",
+                          fontSize: "0.72rem",
+                          fontWeight: 700,
+                          background: badge.bg,
+                          color: badge.color,
+                        }}
+                      >
+                        {badge.label}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

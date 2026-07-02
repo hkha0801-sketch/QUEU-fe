@@ -1,9 +1,7 @@
 import React from "react";
 import { useInterview } from "../hooks/useInterview";
-import InterviewSetup from "../components/InterviewSetup";
-import InterviewSessionView from "../components/InterviewSessionView";
-import InterviewReportView from "../components/InterviewReportView";
 import InterviewLanding from "../components/InterviewLanding";
+import InterviewEditorView from "../components/Intervieweditorview";
 
 const InterviewPage: React.FC = () => {
   const {
@@ -22,8 +20,16 @@ const InterviewPage: React.FC = () => {
     return <InterviewLanding onStartNow={goToSetup} />;
   }
 
-  if (phase === "setup") {
-    return <InterviewSetup onStart={beginInterview} isLoading={isLoading} onBack={resetInterview} />;
+  if (phase === "setup" || phase === "session") {
+    return (
+      <InterviewEditorView
+        session={session!}
+        onSubmitAnswer={submitAnswer}
+        isLoading={isLoading}
+        error={error}
+        onBack={resetInterview}
+      />
+    );
   }
 
   if (phase === "generating-report") {
@@ -39,17 +45,14 @@ const InterviewPage: React.FC = () => {
   }
 
   if (phase === "report" && report) {
-    return <InterviewReportView report={report} onRestart={resetInterview} />;
-  }
-
-  if (phase === "session" && session) {
     return (
-      <InterviewSessionView
-        session={session}
-        onSubmitAnswer={submitAnswer}
-        isLoading={isLoading}
-        error={error}
-      />
+      <div className="interview-loading-screen">
+        <div className="interview-loading-title">Phỏng vấn hoàn tất!</div>
+        <div className="interview-loading-sub">Điểm: {report.totalScore} / 100</div>
+        <button onClick={resetInterview} style={{ marginTop: 24, padding: "10px 24px", borderRadius: 8, cursor: "pointer" }}>
+          Quay lại trang chủ
+        </button>
+      </div>
     );
   }
 
