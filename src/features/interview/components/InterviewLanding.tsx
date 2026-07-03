@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import SchedulePickerModal from "./SchedulePickerModal";
 
 interface PastInterview {
   id: number;
@@ -22,13 +23,45 @@ const RESULT_BADGE: Record<string, { label: string; color: string; bg: string }>
 
 interface Props {
   onStartNow: () => void;
-  onSchedule?: () => void;
+  onSchedule?: (date: Date) => void;
   onChatWithArya?: () => void;
 }
 
+function formatScheduleLabel(date: Date): string {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(date);
+  target.setHours(0, 0, 0, 0);
+  const diffDays = Math.round((target.getTime() - today.getTime()) / 86400000);
+
+  const dateStr = target.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+  if (diffDays === 0) return `Hôm nay (${dateStr})`;
+  if (diffDays === 1) return `Ngày mai (${dateStr})`;
+  if (diffDays > 1) return `${diffDays} ngày nữa (${dateStr})`;
+  return dateStr;
+}
+
 const InterviewLanding: React.FC<Props> = ({ onStartNow, onSchedule, onChatWithArya }) => {
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState<Date | null>(null);
+
+  const handleConfirmSchedule = (date: Date) => {
+    setScheduledDate(date);
+    setIsCalendarOpen(false);
+    onSchedule?.(date);
+  };
+
   return (
-    <div className="ai-interview-page">
+    <div
+      className="ai-interview-page"
+      style={{
+        width: "100%",
+        maxWidth: "100%",
+        margin: 0,
+        boxSizing: "border-box",
+      }}
+    >
       {/* Header */}
       <div className="ai-interview-header">
         <div className="ai-interview-header-left">
@@ -45,7 +78,7 @@ const InterviewLanding: React.FC<Props> = ({ onStartNow, onSchedule, onChatWithA
       {/* Active & Upcoming */}
       <section className="ai-interview-section">
         <h2 className="ai-interview-section-title">Active &amp; Upcoming</h2>
-        <div className="ai-interview-cards">
+        <div className="ai-interview-cards" style={{ width: "100%" }}>
           {/* Start Now Card */}
           <div className="ai-interview-card">
             <div className="ai-interview-card-icon">
@@ -73,10 +106,12 @@ const InterviewLanding: React.FC<Props> = ({ onStartNow, onSchedule, onChatWithA
             </div>
             <div className="ai-interview-card-name ai-interview-card-name--muted">Hẹn lịch</div>
             <div className="ai-interview-card-desc ai-interview-card-desc--muted">
-              Lịch tiếp theo của bạn: 2 ngày nữa
+              {scheduledDate
+                ? `Lịch tiếp theo của bạn: ${formatScheduleLabel(scheduledDate)}`
+                : "Bạn chưa có lịch phỏng vấn nào sắp tới"}
             </div>
-            <button className="ai-interview-schedule-btn" onClick={onSchedule}>
-              Lên lịch buổi phỏng vấn tiếp theo
+            <button className="ai-interview-schedule-btn" onClick={() => setIsCalendarOpen(true)}>
+              {scheduledDate ? "Đổi lịch phỏng vấn" : "Lên lịch buổi phỏng vấn tiếp theo"}
             </button>
           </div>
         </div>
@@ -125,6 +160,14 @@ const InterviewLanding: React.FC<Props> = ({ onStartNow, onSchedule, onChatWithA
           </table>
         </div>
       </section>
+
+      {isCalendarOpen && (
+        <SchedulePickerModal
+          initialDate={scheduledDate ?? undefined}
+          onClose={() => setIsCalendarOpen(false)}
+          onConfirm={handleConfirmSchedule}
+        />
+      )}
     </div>
   );
 };

@@ -17,7 +17,14 @@ const InterviewPage: React.FC = () => {
   } = useInterview();
 
   if (phase === "landing") {
-    return <InterviewLanding onStartNow={goToSetup} />;
+    return (
+      <InterviewLanding
+        onStartNow={goToSetup}
+        onChatWithArya={() => {
+          window.location.href = "/chat";
+        }}
+      />
+    );
   }
 
   if (phase === "setup" || phase === "session") {
