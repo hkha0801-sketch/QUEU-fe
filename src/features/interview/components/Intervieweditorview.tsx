@@ -11,6 +11,63 @@ interface Props {
 
 const LANG_OPTIONS = ["JavaScript", "Python", "C++", "Java", "TypeScript"];
 
+const KEYWORDS_BY_LANG: Record<string, string[]> = {
+  JavaScript: [
+    "var", "let", "const", "function", "return", "if", "else", "for", "while",
+    "do", "switch", "case", "break", "continue", "new", "delete", "typeof",
+    "instanceof", "in", "of", "class", "extends", "super", "this", "try",
+    "catch", "finally", "throw", "async", "await", "yield", "import", "export",
+    "default", "from", "as", "static", "get", "set", "true", "false", "null",
+    "undefined", "void", "with",
+  ],
+  TypeScript: [
+    "var", "let", "const", "function", "return", "if", "else", "for", "while",
+    "do", "switch", "case", "break", "continue", "new", "delete", "typeof",
+    "instanceof", "in", "of", "class", "extends", "super", "this", "try",
+    "catch", "finally", "throw", "async", "await", "yield", "import", "export",
+    "default", "from", "as", "static", "get", "set", "true", "false", "null",
+    "undefined", "void", "interface", "type", "enum", "implements", "public",
+    "private", "protected", "readonly", "abstract", "namespace", "declare",
+    "is", "keyof", "infer", "never", "unknown", "any", "string", "number",
+    "boolean",
+  ],
+  Python: [
+    "def", "return", "if", "elif", "else", "for", "while", "break", "continue",
+    "pass", "import", "from", "as", "class", "try", "except", "finally",
+    "raise", "with", "lambda", "yield", "global", "nonlocal", "assert", "del",
+    "in", "is", "not", "and", "or", "True", "False", "None", "async", "await",
+  ],
+  "C++": [
+    "int", "float", "double", "char", "bool", "void", "long", "short",
+    "unsigned", "signed", "class", "struct", "public", "private", "protected",
+    "virtual", "override", "static", "const", "constexpr", "return", "if",
+    "else", "for", "while", "do", "switch", "case", "break", "continue",
+    "new", "delete", "this", "namespace", "using", "template", "typename",
+    "try", "catch", "throw", "true", "false", "nullptr", "auto", "vector",
+    "string", "include", "define",
+  ],
+  Java: [
+    "public", "private", "protected", "static", "final", "class", "interface",
+    "extends", "implements", "abstract", "void", "int", "long", "float",
+    "double", "char", "boolean", "byte", "short", "return", "if", "else",
+    "for", "while", "do", "switch", "case", "break", "continue", "new",
+    "this", "super", "try", "catch", "finally", "throw", "throws", "import",
+    "package", "true", "false", "null", "instanceof", "enum",
+  ],
+};
+
+const escapeHtml = (str: string) =>
+  str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+const highlightCode = (code: string, language: string) => {
+  const keywords = KEYWORDS_BY_LANG[language] ?? KEYWORDS_BY_LANG.JavaScript;
+  const pattern = new RegExp(`\\b(${keywords.join("|")})\\b`, "g");
+  return escapeHtml(code).replace(pattern, '<strong class="ie-kw">$1</strong>');
+};
+
 type Difficulty = "Easy" | "Medium" | "Hard";
 
 const DIFFICULTY_CLASS: Record<Difficulty, string> = {
@@ -50,14 +107,7 @@ const PROBLEMS: Problem[] = [
     exampleInput: "nums = [2,7,11,15], target = 9",
     exampleOutput: "[0,1]",
     exampleExplanation: "Because nums[0] + nums[1] == 9, we return [0, 1].",
-    defaultCode: `/**
- * @param {number[]} nums
- * @param {number} target
- * @return {number[]}
- */
-var twoSum = function(nums, target) {
-    // Write your code here
-};`,
+    defaultCode: `var twoSum = function(nums, target) {\n    \n};`,
     testCases: [
       { id: 1, label: "Case 1", nums: "[2,7,11,15]", target: "9" },
       { id: 2, label: "Case 2", nums: "[3,2,4]", target: "6" },
@@ -75,13 +125,7 @@ var twoSum = function(nums, target) {
     exampleInput: "prices = [7,1,5,3,6,4]",
     exampleOutput: "5",
     exampleExplanation: "Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6 - 1 = 5.",
-    defaultCode: `/**
- * @param {number[]} prices
- * @return {number}
- */
-var maxProfit = function(prices) {
-    // Write your code here
-};`,
+    defaultCode: `var maxProfit = function(prices) {\n    \n};`,
     testCases: [
       { id: 1, label: "Case 1", nums: "[7,1,5,3,6,4]", target: "-" },
       { id: 2, label: "Case 2", nums: "[7,6,4,3,1]", target: "-" },
@@ -97,14 +141,7 @@ var maxProfit = function(prices) {
     exampleInput: 's = "anagram", t = "nagaram"',
     exampleOutput: "true",
     exampleExplanation: "Both strings contain the same characters with the same frequency.",
-    defaultCode: `/**
- * @param {string} s
- * @param {string} t
- * @return {boolean}
- */
-var isAnagram = function(s, t) {
-    // Write your code here
-};`,
+    defaultCode: `var isAnagram = function(s, t) {\n    \n};`,
     testCases: [
       { id: 1, label: "Case 1", nums: '"anagram"', target: '"nagaram"' },
       { id: 2, label: "Case 2", nums: '"rat"', target: '"car"' },
@@ -129,6 +166,21 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
   const [code, setCode] = useState(problem.defaultCode);
   const lineCount = useMemo(() => code.split("\n").length, [code]);
 
+  const [language, setLanguage] = useState(LANG_OPTIONS[0]);
+  const highlightedCode = useMemo(
+    () => highlightCode(code, language),
+    [code, language]
+  );
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const highlightRef = useRef<HTMLPreElement | null>(null);
+
+  const syncScroll = () => {
+    if (textareaRef.current && highlightRef.current) {
+      highlightRef.current.scrollTop = textareaRef.current.scrollTop;
+      highlightRef.current.scrollLeft = textareaRef.current.scrollLeft;
+    }
+  };
+
   const goToProblem = (nextIndex: number) => {
     const wrapped = (nextIndex + PROBLEMS.length) % PROBLEMS.length;
     const nextProblem = PROBLEMS[wrapped];
@@ -145,7 +197,6 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
     onSubmitAnswer(code);
   };
 
-  // --- Video card 2: camera OR screen share (only one active at a time) ---
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [mediaSource, setMediaSource] = useState<"none" | "camera" | "screen">("none");
@@ -168,7 +219,6 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
       setMediaError("Trình duyệt không hỗ trợ camera.");
       return;
     }
-    // Nếu đang share màn hình thì dừng lại trước khi bật camera
     streamRef.current?.getTracks().forEach((track) => track.stop());
     setMediaStatus("starting");
     setMediaError(null);
@@ -201,7 +251,6 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
       setMediaError("Trình duyệt không hỗ trợ chia sẻ màn hình.");
       return;
     }
-    // Nếu đang bật camera thì dừng lại trước khi chia sẻ màn hình
     streamRef.current?.getTracks().forEach((track) => track.stop());
     setMediaStatus("starting");
     setMediaError(null);
@@ -217,7 +266,6 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
       }
       setMediaSource("screen");
       setMediaStatus("active");
-      // Khi người dùng bấm "Stop sharing" ở thanh trình duyệt
       stream.getVideoTracks()[0]?.addEventListener("ended", () => {
         stopMedia();
       });
@@ -238,7 +286,6 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
   };
 
   useEffect(() => {
-    // Tự động bật camera ngay khi vào trang, không cần bấm chọn
     startCamera();
     return () => {
       streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -247,7 +294,6 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
 
   return (
     <div className="ie-page">
-      {/* Header */}
       <div className="ie-header">
         <div className="ie-header-left">
           <span className="ie-header-icon">{"</>"}</span>
@@ -284,7 +330,11 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
               ? "Đang xử lý…"
               : "Share screen"}
           </button>
-          <select className="ie-lang-select" defaultValue={LANG_OPTIONS[0]}>
+          <select
+            className="ie-lang-select"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+          >
             {LANG_OPTIONS.map((lang) => (
               <option key={lang} value={lang}>
                 {lang}
@@ -295,11 +345,8 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
         </div>
       </div>
 
-      {/* Main grid: left (video + description) / right (editor + tests) */}
       <div className="ie-main">
-        {/* LEFT COLUMN */}
         <div className="ie-left">
-          {/* Video panels */}
           <div className="ie-video-row">
             <div className="ie-video-card">
               <span className="ie-live-badge">● LIVE</span>
@@ -401,7 +448,6 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
             </div>
           </div>
 
-          {/* Description box */}
           <div className="ie-description-card">
             <div className="ie-description-tab">Description</div>
             <div className="ie-description-body">
@@ -420,33 +466,67 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
           </div>
         </div>
 
-        {/* RIGHT COLUMN */}
         <div className="ie-right">
-          {/* Code editor card */}
           <div className="ie-editor-card">
             <div className="ie-editor-tab">solution.js</div>
             <div className="ie-editor-body">
-              <div className="ie-editor-wrap">
+              <div className="ie-editor-wrap" style={{ display: "flex", width: "100%", height: "100%" }}>
                 <div className="ie-editor-lines" aria-hidden="true">
                   {Array.from({ length: lineCount }).map((_, i) => (
-                    <div key={i} className="ie-line-num">
+                    <div key={i} className="ie-line-num" style={{ fontSize: "13px", lineHeight: "1.4" }}>
                       {i + 1}
                     </div>
                   ))}
                 </div>
-                <textarea
-                  className="ie-editor-textarea"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  spellCheck={false}
-                  rows={lineCount}
-                  wrap="off"
-                />
+
+                <div className="ie-editor-container" style={{ position: "relative", flex: 1, minHeight: `${lineCount * 18.2}px`, width: "100%" }}>
+                  <pre
+                    ref={highlightRef}
+                    className="ie-editor-highlight"
+                    aria-hidden="true"
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      width: "100%",
+                      height: "100%",
+                      background: "transparent",
+                      zIndex: 1,
+                      overflow: "hidden",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                      fontSize: "13px",
+                      lineHeight: "1.4"
+                    }}
+                    dangerouslySetInnerHTML={{ __html: highlightedCode + "\n" }}
+                  />
+
+                  <textarea
+                    ref={textareaRef}
+                    className="ie-editor-textarea"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    onScroll={syncScroll}
+                    spellCheck={false}
+                    wrap="off"
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      width: "100%",
+                      height: "100%",
+                      background: "transparent",
+                      color: "transparent",
+                      caretColor: "var(--ie-caret-color, #111)",
+                      resize: "none",
+                      zIndex: 2,
+                      fontSize: "13px",
+                      lineHeight: "1.4"
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Test cases card */}
           <div className="ie-tests-card">
             <div className="ie-tests-tabbar">
               <div className="ie-tests-tabs-left">
