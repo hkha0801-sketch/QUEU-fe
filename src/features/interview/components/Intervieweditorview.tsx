@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { InterviewSession } from "../types/interview.types";
 
 interface Props {
@@ -145,6 +145,106 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
     onSubmitAnswer(code);
   };
 
+  // --- Video card 2: camera OR screen share (only one active at a time) ---
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [mediaSource, setMediaSource] = useState<"none" | "camera" | "screen">("none");
+  const [mediaStatus, setMediaStatus] = useState<"idle" | "starting" | "active" | "error">("idle");
+  const [mediaError, setMediaError] = useState<string | null>(null);
+
+  const stopMedia = () => {
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setMediaSource("none");
+    setMediaStatus("idle");
+  };
+
+  const startCamera = async () => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setMediaStatus("error");
+      setMediaError("Trình duyệt không hỗ trợ camera.");
+      return;
+    }
+    // Nếu đang share màn hình thì dừng lại trước khi bật camera
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    setMediaStatus("starting");
+    setMediaError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false,
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+      setMediaSource("camera");
+      setMediaStatus("active");
+      stream.getVideoTracks()[0]?.addEventListener("ended", () => {
+        stopMedia();
+      });
+    } catch (err) {
+      setMediaStatus("error");
+      setMediaError(
+        err instanceof Error ? err.message : "Không thể truy cập camera."
+      );
+    }
+  };
+
+  const startScreenShare = async () => {
+    if (!navigator.mediaDevices?.getDisplayMedia) {
+      setMediaStatus("error");
+      setMediaError("Trình duyệt không hỗ trợ chia sẻ màn hình.");
+      return;
+    }
+    // Nếu đang bật camera thì dừng lại trước khi chia sẻ màn hình
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    setMediaStatus("starting");
+    setMediaError(null);
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: false,
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+      setMediaSource("screen");
+      setMediaStatus("active");
+      // Khi người dùng bấm "Stop sharing" ở thanh trình duyệt
+      stream.getVideoTracks()[0]?.addEventListener("ended", () => {
+        stopMedia();
+      });
+    } catch (err) {
+      setMediaStatus("error");
+      setMediaError(
+        err instanceof Error ? err.message : "Không thể chia sẻ màn hình."
+      );
+    }
+  };
+
+  const toggleScreenShare = () => {
+    if (mediaSource === "screen" && mediaStatus === "active") {
+      stopMedia();
+    } else {
+      startScreenShare();
+    }
+  };
+
+  useEffect(() => {
+    // Tự động bật camera ngay khi vào trang, không cần bấm chọn
+    startCamera();
+    return () => {
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+    };
+  }, []);
+
   return (
     <div className="ie-page">
       {/* Header */}
@@ -173,7 +273,17 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
           </button>
         </div>
         <div className="ie-header-right">
-          <button className="ie-share-btn">Share screen</button>
+          <button
+            className="ie-share-btn"
+            onClick={toggleScreenShare}
+            disabled={mediaStatus === "starting"}
+          >
+            {mediaSource === "screen" && mediaStatus === "active"
+              ? "Stop sharing"
+              : mediaStatus === "starting"
+              ? "Đang xử lý…"
+              : "Share screen"}
+          </button>
           <select className="ie-lang-select" defaultValue={LANG_OPTIONS[0]}>
             {LANG_OPTIONS.map((lang) => (
               <option key={lang} value={lang}>
@@ -196,8 +306,98 @@ const InterviewEditorView: React.FC<Props> = ({ onSubmitAnswer, isLoading, error
               <div className="ie-video-placeholder" />
             </div>
             <div className="ie-video-card">
-              <span className="ie-live-badge">● LIVE</span>
-              <div className="ie-video-placeholder" />
+              {mediaStatus === "active" && (
+                <span className="ie-live-badge">● LIVE</span>
+              )}
+              <video
+                ref={videoRef}
+                className="ie-video-feed"
+                autoPlay
+                playsInline
+                muted
+                style={{
+                  display: mediaStatus === "active" ? "block" : "none",
+                  width: "100%",
+                  height: "100%",
+                  objectFit: mediaSource === "screen" ? "contain" : "cover",
+                  background: mediaSource === "screen" ? "#000" : undefined,
+                  borderRadius: "inherit",
+                }}
+              />
+              {mediaStatus !== "active" && (
+                <div
+                  className="ie-video-placeholder ie-video-placeholder--camera"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 8,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "100%",
+                    width: "100%",
+                  }}
+                >
+                  {mediaStatus === "starting" && <span>Đang khởi động…</span>}
+                  {mediaStatus === "idle" && (
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button
+                        type="button"
+                        className="ie-btn ie-btn--ghost"
+                        onClick={startCamera}
+                      >
+                        Bật camera
+                      </button>
+                      <button
+                        type="button"
+                        className="ie-btn ie-btn--ghost"
+                        onClick={startScreenShare}
+                      >
+                        Chia sẻ màn hình
+                      </button>
+                    </div>
+                  )}
+                  {mediaStatus === "error" && (
+                    <div
+                      className="ie-camera-error"
+                      style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}
+                    >
+                      <span>{mediaError ?? "Không thể mở camera hoặc chia sẻ màn hình."}</span>
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <button
+                          type="button"
+                          className="ie-btn ie-btn--ghost"
+                          onClick={startCamera}
+                        >
+                          Thử bật camera
+                        </button>
+                        <button
+                          type="button"
+                          className="ie-btn ie-btn--ghost"
+                          onClick={startScreenShare}
+                        >
+                          Thử chia sẻ màn hình
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+              {mediaStatus === "active" && (
+                <button
+                  type="button"
+                  className="ie-icon-btn ie-video-stop-btn"
+                  onClick={stopMedia}
+                  title={mediaSource === "screen" ? "Dừng chia sẻ màn hình" : "Tắt camera"}
+                  style={{
+                    position: "absolute",
+                    bottom: 8,
+                    right: 8,
+                    zIndex: 2,
+                  }}
+                >
+                  ⏻
+                </button>
+              )}
             </div>
           </div>
 
