@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/static/css/main.816785be.css",
+    "main.js": "/static/js/main.744d4eb8.js",
+    "static/js/787.7cd14bed.chunk.js": "/static/js/787.7cd14bed.chunk.js",
+    "static/media/Logo.png": "/static/media/Logo.e27b112419c2882d52d1.png",
+    "static/media/Kunika.otf": "/static/media/Kunika.8ad602aced60bcf49b6d.otf",
+    "index.html": "/index.html",
+    "main.816785be.css.map": "/static/css/main.816785be.css.map",
+    "main.744d4eb8.js.map": "/static/js/main.744d4eb8.js.map",
+    "787.7cd14bed.chunk.js.map": "/static/js/787.7cd14bed.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.816785be.css",
+    "static/js/main.744d4eb8.js"
+  ]
+}
